@@ -179,12 +179,18 @@ public final class WSDLUtil {
             Service service = (Service) serviceObject;
             for (Object portObject : service.getPorts().values()) {
                 Port port = (Port) portObject;
+		String locationURI = getEndpointAddress(port);
                 for (Object extObject : port.getExtensibilityElements()) {
-                    if (extObject instanceof SOAPAddress) {
-                        SOAPAddress address = (SOAPAddress) extObject;
-                        String toReplace = Strings.replaceProperties(address.getLocationURI(), propertyResolver);
-                        if (!toReplace.isEmpty() && !toReplace.equals(address.getLocationURI())) {
-                            address.setLocationURI(toReplace);
+                    if (extObject instanceof SOAPAddress || extObject instanceof SOAP12Address) {
+                        String toReplace = Strings.replaceProperties(locationURI, propertyResolver);
+                        if (!toReplace.isEmpty() && !toReplace.equals(locationURI)) {
+                            if (extObject instanceof SOAPAddress) {
+	                        SOAPAddress address = (SOAPAddress) extObject;
+                                address.setLocationURI(toReplace);
+                            } else if (extObject instanceof SOAP12Address) {
+	                        SOAP12Address address = (SOAP12Address) extObject;
+                                address.setLocationURI(toReplace);
+                            }
                         }
                     }
                 }
