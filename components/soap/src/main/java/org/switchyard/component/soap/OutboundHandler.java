@@ -260,6 +260,13 @@ public class OutboundHandler extends BaseServiceHandler {
                     if (toAddress != null) {
                         _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toAddress);
                     }
+                } else {
+                    // Defaulting to use soapAction property in request header
+                    _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+                }
+
+                if (_config.getEndpointAddress() != null) {
+                    _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
                 }
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
